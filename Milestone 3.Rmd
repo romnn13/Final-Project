@@ -1,0 +1,28 @@
+---
+title: "Milestone 3"
+author: "George Guarnieri"
+date: "9/27/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(janitor)
+
+vend_data<-read.csv("vend-created_date-for-outlet.csv") %>%
+  clean_names()
+vend_data %>%
+  group_by(supplier_code)%>%
+  ggplot(aes(x=supplier_code,y=sell_through_rate)) +geom_col()+coord_flip()
+
+```
+
