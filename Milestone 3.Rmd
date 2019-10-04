@@ -26,4 +26,10 @@ vend_data %>%
 
 ```
 
-For my final project plan, I hope to analyze data from The Harvard Shop. This semester, I will be taking over as the managing director of The Harvard Shop, and I have been granted access to all of the data from Vend (point of sale system) as well as Shopify (web sale system). My current plan for the final project is is to in some way utilize both of these datasets to draw conclusions that can help The Harvard Shop's procurement process. So far, to get started, I have started by reading in the data from Vend, and made a basic visual of sell through rates by vendor. 
+For my final project plan, I hope to analyze data from The Harvard Shop. This semester, I will be taking over as the managing director of The Harvard Shop, and I have been granted access to all of the data from Vend (point of sale system) as well as Shopify (web sale system). 
+
+My current plan for the final project is is to in some way utilize both of these datasets to draw conclusions that can assist with The Harvard Shop's procurement process. There is a great deal of room for data driven decision making in this particular area.  So far, to get started, I have started by reading in the data from Vend, and I have made a basic visual of sell through rates by vendor. 
+
+What I eventually hope to do is determine which inventory moves the fastest, both for point of sale and web, and then build an application out based around this. Additionally, I would like to subdivide this point of sale data by each of the three physical store locations we have. 
+
+I would also like to look into inventory counts and determine where there are discrepancies between web counts and POS counts (they should be the same, the discrepancies are errors that need to be dealt with).
