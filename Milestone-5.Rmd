@@ -1,0 +1,17 @@
+---
+title: "Milestone-5"
+author: "George Guarnieri"
+date: "10/18/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+The data for my final project comes from Harvard Student Agencies. With over 650 undergraduate employees, Harvard Student Agencies is the largest student run business in the world. Harvard Student Agencies has several subsidiaries, with the largest being the Harvard Shop. This coming year, I will be serving as the Managing Director  of the Harvard Shop, and, thus, oversee all aspects of the business. The Harvard Shop has three physical locations, as well as an ecommerce platform. The Harvard Shop records its sales data in two different ways, since it has two different point of sale platforms. The first point of sale system, Vend, is utilized in the physical locations and is simultaneously used as an inventory tracking system. The online store uses a separate point of sale system, Shopify, which sinks its inventory count with that of Vend. 
+
+For my final project, I will be focusing on data from both of these points of sales systems. The data can be exported from Vend and Shopify in CSV format and is already cleaned. The main focus on my project will be the Harvard Shop’s Web Sales, and how they can best be improved. The different variables that I have available include Month (Includes both the month and year), Fulfillment Status, Customer Type, Product Price, Product Title, Average Order Value, Discounts, Returns, Total Cost, and Gross Profit. I have obtained the data from October of 2016 through October of 2019. I hope to identify key trends throughout this period, which will allow for changes to be made to our web processes and site in order to maximize revenue growth. 
+
+
