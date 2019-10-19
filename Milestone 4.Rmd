@@ -9,6 +9,17 @@ output: html_document
 knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE)
 ```
 
+
+
+```{r}
+full_rawdata<-read.csv("sales_2016-10-18_2019-10-18.csv")
+full_rawdata
+```
+
+
+
+
+
 ```{r}
 
 # Installed all necessary libraries
@@ -61,3 +72,27 @@ plot
 ```
 
 In my plot, I decided to start examining Web Sales by product. Initially, I wanted to view this over time, but I realized that it would make more sense to facet the data since I was creating a column chart. While the data was already relatively clean, I ended up having to do more work than I had originally anticipated in order to make it work for the plot I had envisioned. The biggest step was remembering that I needed to use the gather function and then figuring out how to apply it in this case. After that, I also made sure I selected what I considered the most relevant products to be by arranging the data and selecting the top 10 products in terms of revenue. Lastly, I adjusted the aesthetics of the ploy as well in terms of the color, which pleased me aesthetically. 
+
+
+
+```{r}
+library(tidyverse)
+#Customer counts
+customer_counts<-read.csv("vend-customer_count-sales_summary-by-month.csv")
+
+magic<-customer_counts%>%
+   gather(key="Date", value="Customer_Count", X1.1.18:X10.1.19)%>%
+    group_by(Date)
+    
+magic$generated_uid <- 1:nrow(magic)
+
+magic%>%
+  arrange(generated_uid)%>%
+  ggplot(aes(x=Date,y=Customer_Count))+geom_point()
+
+  
+    
+  
+  
+```
+
