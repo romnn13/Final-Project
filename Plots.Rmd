@@ -1,0 +1,105 @@
+---
+title: "Milestone 4"
+author: "George Guarnieri"
+date: "10/11/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE)
+```
+
+
+
+```{r}
+full_rawdata<-read.csv("sales_2016-10-18_2019-10-18.csv")
+full_rawdata
+```
+
+
+
+
+
+```{r}
+
+# Installed all necessary libraries
+
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(lubridate)
+library(zoo)
+library(gganimate)
+library(png)
+
+# Made a directory for graphics
+dir.create('graphics')
+# Read in the CSV file containing the data
+vend_data_2_years<-read_csv("Milestone-6/vend-total_revenue-for-product-by-month (2).csv")
+
+# Created a plot of Web Revenue by year.
+
+vend_1<-vend_data_2_years%>%
+
+# Arranged the data by descending revenue value. Selected the top 10 products in terms of Revenue. 
+  
+  arrange(desc(Revenue))%>%
+  head(10)%>%
+  
+# Used the gather function to tame the data with key value pairs.
+  
+  gather(key="Month/Year", value="Revenue", `Nov 2017`:`Oct 2019`)%>%
+  
+# Selected the relevant variables
+  
+  select(Product, 'Month/Year', Revenue)%>%
+  
+# Extracted the years and grouped by product and year
+  
+  separate('Month/Year',c("Month","Year"))%>%
+  group_by(Product,Year)%>%
+  
+# Summarized the sum of the revenue by product and year
+  
+  summarize(revenue=sum(Revenue))
+
+# Created a plot showing revenue by product by year. Used a column chart and facet wrapped by year. Gave the chart a title, subtitle, and axis labels. Removed the tick labels from the x-axis since they were too crowded.
+  
+
+plot<-ggplot(vend_1,aes(x=Product,y=revenue,group=Product,fill=Product))+geom_col()+facet_wrap(~Year)+labs(title="Web Revenue by Product 2017-2019",subtitle="Data Sourced From Vend",y="Revenue",x="Product")+theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())
+
+saveRDS(plot,file='graphics/plot.rds')
+
+
+
+                                                                          
+
+
+
+```
+
+In my plot, I decided to start examining Web Sales by product. Initially, I wanted to view this over time, but I realized that it would make more sense to facet the data since I was creating a column chart. While the data was already relatively clean, I ended up having to do more work than I had originally anticipated in order to make it work for the plot I had envisioned. The biggest step was remembering that I needed to use the gather function and then figuring out how to apply it in this case. After that, I also made sure I selected what I considered the most relevant products to be by arranging the data and selecting the top 10 products in terms of revenue. Lastly, I adjusted the aesthetics of the ploy as well in terms of the color, which pleased me aesthetically. 
+
+
+
+```{r}
+library(tidyverse)
+#Customer counts
+customer_counts<-read.csv("vend-customer_count-sales_summary-by-month.csv")
+
+magic<-customer_counts%>%
+   gather(key="Date", value="Customer_Count", X1.1.18:X10.1.19)%>%
+    group_by(Date)
+    
+magic$generated_uid <- 1:nrow(magic)
+
+magic%>%
+  arrange(generated_uid)%>%
+  ggplot(aes(x=Date,y=Customer_Count))+geom_point()
+
+  
+    
+  
+  
+```
+

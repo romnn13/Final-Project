@@ -32,11 +32,11 @@ library(zoo)
 library(gganimate)
 library(png)
 # Read in the CSV file containing the data
-vend_data_2_years<-read_csv("vend-total_revenue-for-product-by-month (2).csv")
+vend_data_2_years<-read_csv("Milestone-6/vend-total_revenue-for-product-by-month (2).csv")
 
 # Created a plot of Web Revenue by year.
 
-plot<-vend_data_2_years%>%
+vend_1<-vend_data_2_years%>%
 
 # Arranged the data by descending revenue value. Selected the top 10 products in terms of Revenue. 
   
@@ -58,13 +58,14 @@ plot<-vend_data_2_years%>%
   
 # Summarized the sum of the revenue by product and year
   
-  summarize(revenue=sum(Revenue))%>%
+  summarize(revenue=sum(Revenue))
 
 # Created a plot showing revenue by product by year. Used a column chart and facet wrapped by year. Gave the chart a title, subtitle, and axis labels. Removed the tick labels from the x-axis since they were too crowded.
   
-  ggplot(aes(x=Product,y=revenue,group=Product,fill=Product))+geom_col()+facet_wrap(~Year)+labs(title="Web Revenue by Product 2017-2019",subtitle="Data Sourced From Vend",y="Revenue",x="Product")+theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())
 
-plot
+ggplot(vend_1,aes(x=Product,y=revenue,group=Product,fill=Product))+geom_col()+facet_wrap(~Year)+labs(title="Web Revenue by Product 2017-2019",subtitle="Data Sourced From Vend",y="Revenue",x="Product")+theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())
+
+
                                                                           
 
 
