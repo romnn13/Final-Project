@@ -25,6 +25,14 @@ ui <- fluidPage(
                )
                
                
+               ),
+               
+               
+               tabPanel("Seasonality in Web Sales", mainPanel(
+                   plotOutput("webtime2019"),
+                   p("Web sales in 2019 over time")
+               )
+               
                )
     )
 )
@@ -35,6 +43,13 @@ server <- function(input, output) {
     output$image <- renderPlot({
         readRDS(file='plot.rds')
         })
+    
+    output$webtime2019 <- renderImage({
+        # generate bins based on input$bins from ui.R
+        list(src = "2019webtime",
+             contentType = 'image/gif')})
+    
+    
 }
 
 # Run the application 
