@@ -65,11 +65,18 @@ vend_1<-vend_data_2_years%>%
 
 # Created a plot showing revenue by product by year. Used a column chart and facet wrapped by year. Gave the chart a title, subtitle, and axis labels. Removed the tick labels from the x-axis since they were too crowded.
   
+vend_data_2_years
 
 plot<-ggplot(vend_1,aes(x=Product,y=revenue,group=Product,fill=Product))+geom_col()+facet_wrap(~Year)+labs(title="Web Revenue by Product 2017-2019",subtitle="Data Sourced From Vend",y="Revenue",x="Product")+theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())
 
 saveRDS(plot,file='graphics/plot.rds')
 
+growth <- vend_data_2_years %>%
+  group_by(Product) %>%
+  mutate(oct2019='Oct 2019',oct2018='Oct 2018') %>%
+  mutate(oct2019=as.numeric(oct2019),oct2018=as.numeric(oct2018)) 
+
+growth
 
 
                                                                           
@@ -81,25 +88,53 @@ saveRDS(plot,file='graphics/plot.rds')
 In my plot, I decided to start examining Web Sales by product. Initially, I wanted to view this over time, but I realized that it would make more sense to facet the data since I was creating a column chart. While the data was already relatively clean, I ended up having to do more work than I had originally anticipated in order to make it work for the plot I had envisioned. The biggest step was remembering that I needed to use the gather function and then figuring out how to apply it in this case. After that, I also made sure I selected what I considered the most relevant products to be by arranging the data and selecting the top 10 products in terms of revenue. Lastly, I adjusted the aesthetics of the ploy as well in terms of the color, which pleased me aesthetically. 
 
 
-
-```{r}
+```{r seasonal trends}
 library(tidyverse)
-#Customer counts
-customer_counts<-read.csv("vend-customer_count-sales_summary-by-month.csv")
+library(dplyr)
+library(gganimate)
+library(cowplot)
 
-magic<-customer_counts%>%
-   gather(key="Date", value="Customer_Count", X1.1.18:X10.1.19)%>%
-    group_by(Date)
-    
-magic$generated_uid <- 1:nrow(magic)
 
-magic%>%
-  arrange(generated_uid)%>%
-  ggplot(aes(x=Date,y=Customer_Count))+geom_point()
+web_over_time_2019 <- read.csv('Other_Data/Web over time.csv')
+web_over_time_2019
+ggplot(web_over_time_2019,aes(x=month, y=net_sales))+geom_point()
+grouped_web_over_time_2019<- web_over_time_2019 %>%
+  mutate(period=1)
 
+grouped_web_over_time_2019
   
-    
-  
-  
+ 
+
+
+
+
+
+time_2019_plot <- grouped_web_over_time_2019 %>%
+  ggplot(aes(x=month, y=net_sales, color=month))+geom_point(size=3, aes(group=period))+transition_states(month) +     labs(x="Month", y="Net Sales")
+
+anim_save(filename='2019webtime',animation=time_2019_plot, path='graphics')
+
+
+
+web_over_time_2018 <- read.csv('Other_Data/2018 web over time.csv') %>%
+  mutate(period=1,year=2018)
+
+
+
+time_2018_plot <- web_over_time_2018 %>%
+  ggplot(aes(x=month, y=net_sales, color=month))+geom_point(size=3, aes(group=period))+transition_states(month) + labs(x="Month", y="Net Sales")
+
+
+
+anim_save(filename='2018webtime',animation=time_2018_plot, path='graphics')
+
+
+
+
+
+
 ```
+
+
+
 
