@@ -33,7 +33,7 @@ ui <- fluidPage(
                
                
                tabPanel("Seasonality in Web Sales", mainPanel(
-                   plotOutput("webtime2019"),plotOutput("webtime2018")
+                   splitLayout(plotOutput("webtime2019"), plotOutput("webtimecool2019")),splitLayout(plotOutput("webtime2018"),plotOutput('webtimecool2018'))
                )
                
                ),
@@ -54,7 +54,11 @@ ui <- fluidPage(
                ),
                
                tabPanel("Web Checkouts", mainPanel(
-                   plotOutput("checkout"), p('test')
+                   plotOutput("checkout"),p('The model produced in this case examines the relatiobship between
+                                             web checkouts and number of sessions. Sessions are displayed along the x-axis
+                                             as a continuous variable. Checkouts was modified to be a binomial, returning
+                                             1 when the customer checked out. As the regression shows, there is a positive 
+                                             correlation between the number of sessions per user, and whether or not they check out.')
                )
                
                )
@@ -88,6 +92,17 @@ server <- function(input, output) {
         list(src = "2018webtime",
              contentType = 'image/gif')},deleteFile = FALSE)
     
+    
+    output$webtimecool2019 <- renderImage({
+        # generate bins based on input$bins from ui.R
+        list(src = "2019webtimecool",
+             contentType = 'image/gif')},deleteFile = FALSE)
+    
+    output$webtimecool2018 <- renderImage({
+        # generate bins based on input$bins from ui.R
+        list(src = "2018webtimecooler",
+             contentType = 'image/gif')},deleteFile = FALSE)
+    
     # Data table attempt
     
     
@@ -104,6 +119,8 @@ server <- function(input, output) {
     output$checkout <- renderPlot({
         readRDS(file='checkout_correct.rds')
     })
+    
+   
     
     
     # Attempted interactive plot

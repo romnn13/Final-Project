@@ -95,6 +95,8 @@ library(gganimate)
 library(cowplot)
 library(fs)
 library(sf)
+library(zoo)
+
 
 web_over_time_2019 <- read.csv('Other_Data/Web over time.csv')
 web_over_time_2019
@@ -111,9 +113,18 @@ grouped_web_over_time_2019
 
 
 time_2019_plot <- grouped_web_over_time_2019 %>%
-  ggplot(aes(x=month, y=net_sales, color=month))+geom_point(size=3, aes(group=period))+transition_states(month) +     labs(x="Month", y="Net Sales") + shadow_trail()
+  ggplot(aes(x=month, y=net_sales, color=month))+geom_point(size=3, aes(group=period))+transition_states(month) +     labs(x="Month", y="Net Sales") + shadow_mark()
 
+time_2019_plot
 anim_save(filename='2019webtime',animation=time_2019_plot, path='graphics')
+
+time_2019_plot_cooler<-grouped_web_over_time_2019 %>%
+  mutate(month=as.Date(as.yearmon(month))) %>%
+  ggplot(aes(x=month, y=net_sales, color=month))+geom_line()+geom_point(size=3, aes(group=period))+ coord_cartesian(clip = 'off') +transition_reveal(month) + labs(title='2019 Web Sales by Month',x="Month", y="Net Sales")
+
+time_2019_plot_cooler
+
+anim_save(filename='2019webtimecool',time_2019_plot_cooler, path='Milestone-6')
 
 
 
@@ -126,6 +137,14 @@ time_2018_plot <- web_over_time_2018 %>%
   ggplot(aes(x=month, y=net_sales, color=month))+geom_point(size=3, aes(group=period))+transition_states(month) + labs(x="Month", y="Net Sales")+shadow_trail()
 
 anim_save(filename='2018webtime',animation=time_2018_plot, path='graphics')
+
+
+time_2018_plot_cooler<-web_over_time_2018 %>%
+  mutate(month=as.Date(as.yearmon(month))) %>%
+  ggplot(aes(x=month, y=net_sales, color=month))+geom_line()+geom_point(size=3, aes(group=period))+ coord_cartesian(clip = 'off') +transition_reveal(month) + labs(title='2018 Web Sales by Month',x="Month", y="Net Sales")
+
+anim_save(filename='2018webtimecooler',time_2018_plot_cooler, path='Milestone-6')
+
 
 
 file_copy('graphics/2018webtime', 'Milestone-6')
@@ -158,6 +177,11 @@ purchasers<-ggplot(purchase, aes(x=total_sessions, y=total_checkouts)) + geom_po
 
 saveRDS(purchasers,file='graphics/checkout_correct.rds')
 file_copy('graphics/checkout_correct.rds', 'Milestone-6')
+
+duration<- ggplot(purchase,(aes(x=avg_duration,y=total_pageviews))) + geom_jitter(height=.1) + labs(title='Page Duration vs. Total Pageviews', x='Duration', y='Pageviews')
+
+saveRDS(duration,file='graphics/duration')
+file_copy('graphics/duration', 'Milestone-6')
 
 
 
