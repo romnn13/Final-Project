@@ -93,7 +93,8 @@ library(tidyverse)
 library(dplyr)
 library(gganimate)
 library(cowplot)
-
+library(fs)
+library(sf)
 
 web_over_time_2019 <- read.csv('Other_Data/Web over time.csv')
 web_over_time_2019
@@ -110,7 +111,7 @@ grouped_web_over_time_2019
 
 
 time_2019_plot <- grouped_web_over_time_2019 %>%
-  ggplot(aes(x=month, y=net_sales, color=month))+geom_point(size=3, aes(group=period))+transition_states(month) +     labs(x="Month", y="Net Sales")
+  ggplot(aes(x=month, y=net_sales, color=month))+geom_point(size=3, aes(group=period))+transition_states(month) +     labs(x="Month", y="Net Sales") + shadow_trail()
 
 anim_save(filename='2019webtime',animation=time_2019_plot, path='graphics')
 
@@ -122,11 +123,14 @@ web_over_time_2018 <- read.csv('Other_Data/2018 web over time.csv') %>%
 
 
 time_2018_plot <- web_over_time_2018 %>%
-  ggplot(aes(x=month, y=net_sales, color=month))+geom_point(size=3, aes(group=period))+transition_states(month) + labs(x="Month", y="Net Sales")
-
-
+  ggplot(aes(x=month, y=net_sales, color=month))+geom_point(size=3, aes(group=period))+transition_states(month) + labs(x="Month", y="Net Sales")+shadow_trail()
 
 anim_save(filename='2018webtime',animation=time_2018_plot, path='graphics')
+
+
+file_copy('graphics/2018webtime', 'Milestone-6')
+file_copy('graphics/2019webtime', 'Milestone-6')
+file_copy('graphics/plot.rds','Milestone-6')
 
 
 

@@ -1,10 +1,13 @@
 library(shiny)
+library(tidyverse)
+
+webtime<- read.csv('Web over time copy.csv')
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
     
     navbarPage("Navbar!",
-               tabPanel("About", 
+               tabPanel("About", img(src='ThsDes.jpg',width=800, height=500),
                         p("Harvard Student Agencies is the largest student run business in the world. With over 650 undergraduate employees,
                         this nonprofit is made up of 13 different agencies, each an entirely different business unit. One such agency, comprising 
                         the largest segment of HSA's revenue, is called the Harvard Shop. Acquired by HSA in the early 2000s, The Harvard Shop
@@ -29,13 +32,27 @@ ui <- fluidPage(
                
                
                tabPanel("Seasonality in Web Sales", mainPanel(
-                   plotOutput("webtime2019"),
-                   p("Web sales in 2019 over time")
+                   plotOutput("webtime2019"),plotOutput("webtime2018")
                )
                
-               )
+               ),
+               
+               
+               tabPanel("Explore the data", mainPanel(fluidRow(
+                   column(4,
+                          selectInput("month",
+                                      "Month:",
+                                      c("All",
+                                        unique(as.character(webtime$month))))
+                   )
+
+                   )
+               ),
+               # Create a new row for the table.
+               DT::dataTableOutput("table")
+               ))
     )
-)
+
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
@@ -47,7 +64,27 @@ server <- function(input, output) {
     output$webtime2019 <- renderImage({
         # generate bins based on input$bins from ui.R
         list(src = "2019webtime",
-             contentType = 'image/gif')})
+             contentType = 'image/gif')}, deleteFile = FALSE)
+    
+    output$webtime2018 <- renderImage({
+        # generate bins based on input$bins from ui.R
+        list(src = "2018webtime",
+             contentType = 'image/gif')},deleteFile = FALSE)
+    
+    # Data table attempt
+    
+    
+    # Filter data based on selections
+    output$table <- DT::renderDataTable(DT::datatable({
+        data <- webtime
+        if (input$month != "All") {
+            data <- data[data$month == input$month,]
+        }
+        data
+    }))
+    
+    
+   
     
     
 }
