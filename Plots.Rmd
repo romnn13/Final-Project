@@ -172,14 +172,14 @@ purchase<-visit %>%
 lm(formula=total_checkouts~total_sessions, data=purchase, family="binomial")
 
 
-purchasers<-ggplot(purchase, aes(x=total_sessions, y=total_checkouts)) + geom_point() + geom_smooth() + labs(x='Total Sessions', y='Checked Out')
+purchasers<-ggplot(purchase, aes(x=total_sessions, y=total_checkouts)) + geom_jitter(height=.1) + geom_smooth() + labs(x='Total Sessions', y='Checked Out')
+
+purchasers
+saveRDS(purchasers,file='Milestone-6/sessions.rds')
 
 
-saveRDS(purchasers,file='graphics/checkout_correct.rds')
-file_copy('graphics/checkout_correct.rds', 'Milestone-6')
-
-duration<- ggplot(purchase,(aes(x=avg_duration,y=total_pageviews))) + geom_jitter(height=.1) + labs(title='Page Duration vs. Total Pageviews', x='Duration', y='Pageviews')
-
+duration<- ggplot(purchase,(aes(x=avg_duration,y=total_pageviews))) + geom_jitter() + labs(title='Page Duration vs. Total Pageviews', x='Duration', y='Pageviews')
+duration
 saveRDS(duration,file='graphics/duration')
 file_copy('graphics/duration', 'Milestone-6')
 

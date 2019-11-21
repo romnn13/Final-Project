@@ -54,11 +54,21 @@ ui <- fluidPage(
                ),
                
                tabPanel("Web Checkouts", mainPanel(
-                   plotOutput("checkout"),p('The model produced in this case examines the relatiobship between
+                   plotOutput("Sessions"),p('The model produced in this case examines the relatiobship between
                                              web checkouts and number of sessions. Sessions are displayed along the x-axis
                                              as a continuous variable. Checkouts was modified to be a binomial, returning
                                              1 when the customer checked out. As the regression shows, there is a positive 
-                                             correlation between the number of sessions per user, and whether or not they check out.')
+                                             correlation between the number of sessions per user, and whether or not they check out.'),
+                   
+                   # Start of interactive
+                   selectInput("Device", "Type of User Device", choices= c("Desktop","Mobile","Tablet")), plotOutput('interactive')
+                  
+                   
+                  
+                   # end of interactive
+                   
+                   
+                   
                )
                
                )
@@ -116,9 +126,18 @@ server <- function(input, output) {
     }))
     
     
-    output$checkout <- renderPlot({
-        readRDS(file='checkout_correct.rds')
+    output$Sessions <- renderPlot({
+        readRDS(file='sessions.rds')
     })
+    
+    
+    output$interactive <- renderPlot({
+        visits %>%
+          filter(ua_form_factor==input$Device) %>%
+          filter(total_pageviews<50) %>%
+          ggplot(aes(x=total_pageviews))+geom_histogram() + ylim(0,40000)
+    })
+    
     
    
     
