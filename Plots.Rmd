@@ -139,6 +139,27 @@ file_copy('graphics/plot.rds','Milestone-6')
 
 ```
 
+```{r}
+visit<-read.csv('Milestone-6/webvisits.csv')
+visit
+```
+
+```{r}
+purchase<-visit %>%
+  mutate(total_checkouts=ifelse(total_checkouts>1,1,0)) %>%
+  filter(total_sessions<60)
 
 
+lm(formula=total_checkouts~total_sessions, data=purchase, family="binomial")
+
+
+purchasers<-ggplot(purchase, aes(x=total_sessions, y=total_checkouts)) + geom_point() + geom_smooth() + labs(x='Total Sessions', y='Checked Out')
+
+
+saveRDS(purchasers,file='graphics/checkout_correct.rds')
+file_copy('graphics/checkout_correct.rds', 'Milestone-6')
+
+
+
+```
 

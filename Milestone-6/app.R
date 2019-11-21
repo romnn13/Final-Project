@@ -2,6 +2,7 @@ library(shiny)
 library(tidyverse)
 
 webtime<- read.csv('Web over time copy.csv')
+visits <- read.csv('webvisits.csv')
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -50,7 +51,23 @@ ui <- fluidPage(
                ),
                # Create a new row for the table.
                DT::dataTableOutput("table")
-               ))
+               ),
+               
+               tabPanel("Web Checkouts", mainPanel(
+                   plotOutput("checkout"), p('test')
+               )
+               
+               )
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               )
     )
 
 
@@ -82,6 +99,15 @@ server <- function(input, output) {
         }
         data
     }))
+    
+    
+    output$checkout <- renderPlot({
+        readRDS(file='checkout_correct.rds')
+    })
+    
+    
+    # Attempted interactive plot
+    
     
     
    
