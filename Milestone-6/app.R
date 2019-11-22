@@ -1,13 +1,26 @@
+
+# Loaded all necessary libraries.
+
 library(shiny)
 library(tidyverse)
+library(ggplot2)
+library(plotly)
+
+# Read in all relevant data utilized in the shiny app.
 
 webtime<- read.csv('Web over time copy.csv')
 visits <- read.csv('webvisits.csv')
+vend_data_2_years<-read_csv("vend-total_revenue-for-product-by-month (2).csv")
 
-# Define UI for application that draws a histogram
+# Define UI for application
 ui <- fluidPage(
+
+# Created the navbar.
     
-    navbarPage("Navbar!",
+    navbarPage("The Harvard Shop!",
+               
+# Inserted the about page
+
                tabPanel("About", img(src='ThsDes.jpg',width=800, height=500),
                         p("Harvard Student Agencies is the largest student run business in the world. With over 650 undergraduate employees,
                         this nonprofit is made up of 13 different agencies, each an entirely different business unit. One such agency, comprising 
@@ -23,23 +36,34 @@ ui <- fluidPage(
                         of analytics. As they do, this project is meant to serve as a starting point. Identifying areas that have been overlooked and seeing
                         if there are any operational conclusions that can be drawn from the data.")
                ),
-               tabPanel("Plot", mainPanel(
+
+# Created the products page. Displayed both the product mix plot as well as the interactive plotly examining sales by product with points for each year. 
+
+               tabPanel("Products", mainPanel(
                    plotOutput("image"),
-                   p("test")
+                   p("This plot shows the change in product mix over the years in the Harvard Shop. It can be seen that in 2017,
+                     the Harvard Hooded Crest Sweatshirt was the best seller. In 2018 and 2019, while postage generated the highest amount of revenue,
+                     the best selling product was also the Hooded Crest Sweatshirt."), p("Another notable aspect of the plot is that
+                    while Hooded Arc Sweatshirts saw increased sales between 2017 and 2018, they saw a decline in sales between 2018
+                    and 2019."), p("The last major noteworthy item is the major decline that H sweaters saw between 2017 and 2019.
+                                   While sales saw a massive increase between 2017 and 2018, they experienced a reversion beyond 2017
+                                   numbers the following year."), plotlyOutput('Hover')
                )
                
                
                ),
                
-               
+ # Created the seasonality in web sales tab. Included 4 different animated graphs. Used split layout to display the same yeared plots on the same row. 
+             
                tabPanel("Seasonality in Web Sales", mainPanel(
-                   splitLayout(plotOutput("webtime2019"), plotOutput("webtimecool2019")),splitLayout(plotOutput("webtime2018"),plotOutput('webtimecool2018'))
+                   splitLayout(cellWidths = 500, plotOutput("webtime2019"), plotOutput("webtimecool2019")),splitLayout(cellWidths = 500,plotOutput("webtime2018"),plotOutput('webtimecool2018'))
                )
                
                ),
                
-               
-               tabPanel("Explore the data", mainPanel(fluidRow(
+# Created a tab allowing the data from Vend to be explored.
+
+               tabPanel("Explore the Vend data", mainPanel(fluidRow(
                    column(4,
                           selectInput("month",
                                       "Month:",
@@ -52,7 +76,9 @@ ui <- fluidPage(
                # Create a new row for the table.
                DT::dataTableOutput("table")
                ),
-               
+ 
+# Created the tab containing the model for web checkouts. Also created an interactive histogram, allowing user to select the type of device being used by the customer.
+              
                tabPanel("Web Checkouts", mainPanel(
                    plotOutput("Sessions"),p('The model produced in this case examines the relatiobship between
                                              web checkouts and number of sessions. Sessions are displayed along the x-axis
@@ -60,13 +86,10 @@ ui <- fluidPage(
                                              1 when the customer checked out. As the regression shows, there is a positive 
                                              correlation between the number of sessions per user, and whether or not they check out.'),
                    
-                   # Start of interactive
                    selectInput("Device", "Type of User Device", choices= c("Desktop","Mobile","Tablet")), plotOutput('interactive')
                   
                    
                   
-                   # end of interactive
-                   
                    
                    
                )
@@ -85,38 +108,45 @@ ui <- fluidPage(
     )
 
 
-# Define server logic required to draw a histogram
+# Define server logic
+
 server <- function(input, output) {
 
+# Rendered plot.rds as "image".
+    
     output$image <- renderPlot({
         readRDS(file='plot.rds')
         })
+
+# Rendered the gif 2019webtime as webtime2019.
     
     output$webtime2019 <- renderImage({
         # generate bins based on input$bins from ui.R
         list(src = "2019webtime",
              contentType = 'image/gif')}, deleteFile = FALSE)
     
+# Rendered the gif 2018webtime as webtime2018.
+    
     output$webtime2018 <- renderImage({
         # generate bins based on input$bins from ui.R
         list(src = "2018webtime",
              contentType = 'image/gif')},deleteFile = FALSE)
     
-    
+# Rendered the gif 2019webtimecool as webtime2019cool.
+        
     output$webtimecool2019 <- renderImage({
         # generate bins based on input$bins from ui.R
         list(src = "2019webtimecool",
              contentType = 'image/gif')},deleteFile = FALSE)
+
+# Rendered the gif 2018webtimecooler as webtimecool2018.    
     
     output$webtimecool2018 <- renderImage({
         # generate bins based on input$bins from ui.R
         list(src = "2018webtimecooler",
              contentType = 'image/gif')},deleteFile = FALSE)
     
-    # Data table attempt
-    
-    
-    # Filter data based on selections
+    # Created an interactive data table. Filter data based on selections.
     output$table <- DT::renderDataTable(DT::datatable({
         data <- webtime
         if (input$month != "All") {
@@ -125,11 +155,13 @@ server <- function(input, output) {
         data
     }))
     
+# Rendered the plot sessions.rds as Sessions.
     
     output$Sessions <- renderPlot({
         readRDS(file='sessions.rds')
     })
     
+# Created a ggplot from the visits data for the interactive histogram.
     
     output$interactive <- renderPlot({
         visits %>%
@@ -138,17 +170,25 @@ server <- function(input, output) {
           ggplot(aes(x=total_pageviews))+geom_histogram() + ylim(0,40000)
     })
     
+ 
+# Created a plotly. Cleaned the data here as previously done in Plots.rmd. Rearranged the key-value pairs in order to properly display and year column. Created the ggplot and passed it into a ggplotly.
     
+    output$Hover <- renderPlotly({
+        vend_1<- vend_data_2_years %>%
+            arrange(desc(Revenue)) %>%
+            head(10) %>%
+            gather(key="Month/Year", value="Revenue", `Nov 2017`:`Oct 2019`) %>%
+            select(Product, 'Month/Year', Revenue) %>%
+            separate('Month/Year',c("Month","Year")) %>%
+            group_by(Product,Year) %>%
+            summarize(revenue=sum(Revenue)) %>%
+            ggplot(aes(x=Product, y=revenue, color=Year)) + geom_point() +  theme(axis.text.x = element_text(angle = 90, hjust = 1)) + labs(x="Product", y="Revenue") 
+        vend_2<- ggplotly(vend_1) %>%
+            layout(autosize = F, width = 500, height = 500)
+        vend_2
+        
+    })
    
-    
-    
-    # Attempted interactive plot
-    
-    
-    
-   
-    
-    
 }
 
 # Run the application 
