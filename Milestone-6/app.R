@@ -21,7 +21,8 @@ ui <- fluidPage(
                
 # Inserted the about page
 
-               tabPanel("About", img(src='ThsDes.jpg',width=800, height=500),
+               tabPanel("About", h1('An Analysis of The Harvard Shop'),img(src='ThsDes.jpg',width=800, height=500),
+                        h2('About HSA'),
                         p("Harvard Student Agencies is the largest student run business in the world. With over 650 undergraduate employees,
                         this nonprofit is made up of 13 different agencies, each an entirely different business unit. One such agency, comprising 
                         the largest segment of HSA's revenue, is called the Harvard Shop. Acquired by HSA in the early 2000s, The Harvard Shop
@@ -30,24 +31,34 @@ ui <- fluidPage(
                         utilizes Vend, a point of sale system. Online, shopify is the ecommerce platform used. The use of these two platforms
                         allows for a needed segmentation between physical and online sales. It is important to note that while there are two
                         sales platforms utilized, only Vend is used in order to track inventory."),
-                        
+                        h2('Source of Data'),
                         p("In recent years the retail world has begun to see a shift in terms of the approach taken to procurement, stock, and inventory
                         management as a result of the data revolution. The Harvard Shop and HSA have only just initiated their shift into this new era
                         of analytics. As they do, this project is meant to serve as a starting point. Identifying areas that have been overlooked and seeing
-                        if there are any operational conclusions that can be drawn from the data.")
+                        if there are any operational conclusions that can be drawn from the data."),
+                        h2('Goal of the Project'),
+                        p("This project's analysis is split up into several different components. First, an alalysis
+                          of the Harvard shop's product mix over time was performed. This analysis was based off of Vend's
+                          data, and, therefore, included sales data from both in store sales and online sales. Next, a seasonal analysis
+                          was conducted for web sales. The goal of this analysis was to gain a better understanding of the Harvard Shop's Sales Cycle. Next, a basic
+                          exploration of the shopify data was done. Finally, modeling was conducted in order to examine the relationship between 
+                          several variables contained in Shopify's web data.")
                ),
 
 # Created the products page. Displayed both the product mix plot as well as the interactive plotly examining sales by product with points for each year. 
 
-               tabPanel("Products", mainPanel(
-                   plotOutput("image"),
+               tabPanel("Products", mainPanel(h1('Product Mix Breakdown'),
                    p("This plot shows the change in product mix over the years in the Harvard Shop. It can be seen that in 2017,
                      the Harvard Hooded Crest Sweatshirt was the best seller. In 2018 and 2019, while postage generated the highest amount of revenue,
                      the best selling product was also the Hooded Crest Sweatshirt."), p("Another notable aspect of the plot is that
                     while Hooded Arc Sweatshirts saw increased sales between 2017 and 2018, they saw a decline in sales between 2018
                     and 2019."), p("The last major noteworthy item is the major decline that H sweaters saw between 2017 and 2019.
                                    While sales saw a massive increase between 2017 and 2018, they experienced a reversion beyond 2017
-                                   numbers the following year."), plotlyOutput('Hover')
+                                   numbers the following year."), plotOutput("image"),h2('Revenue by Product'),p('In contrast with the previous chart
+                                                                                                                    this interactive focuses on revenue by product
+                                                                                                                    as opposed to product mix. As can be seen, while product mix changed over time, 
+                                                                                                                    barring a few cases, there was consistent revenue growth over time for each of these 
+                                                                                                                    large revenue collecters for the Harvard Shop. '),plotlyOutput('Hover')
                )
                
                
@@ -55,20 +66,27 @@ ui <- fluidPage(
                
  # Created the seasonality in web sales tab. Included 4 different animated graphs. Used split layout to display the same yeared plots on the same row. 
              
-               tabPanel("Seasonality in Web Sales", mainPanel(
-                   splitLayout(cellWidths = 500, plotOutput("webtime2019"), plotOutput("webtimecool2019")),splitLayout(cellWidths = 500,plotOutput("webtime2018"),plotOutput('webtimecool2018'))
+               tabPanel("Seasonality in Web Sales", mainPanel(p('The charts below compare the seasonality in web
+                                                                sales between 2018 and 2019. As can be seen, the two years
+                                                                follow a fairly consistent pattern. The main difference comes in the fact that
+                                                                2018 seemed to have less seasonal variance when compared with 2019. The spikes in the graph in 2018
+                                                                appear far less steep than those in the graph for 2019. Interestingly enough, the business decisions
+                                                                of The Harvard Shop line up with these trends. 2019 experienced a great deal of Web Manager turnover,
+                                                                which would explain why the year saw greater variance. In addition to seasonal variance, there was also
+                                                                the variance associated with turnover being captured.'),
+                   splitLayout(cellWidths = 500, plotOutput("webtimecool2018"), plotOutput("webtimecool2019"))
                )
                
                ),
                
 # Created a tab allowing the data from Vend to be explored.
 
-               tabPanel("Explore the Vend data", mainPanel(fluidRow(
+               tabPanel("Explore the Web data", mainPanel(fluidRow(
                    column(4,
-                          selectInput("month",
-                                      "Month:",
+                          selectInput("day",
+                                      "Day:",
                                       c("All",
-                                        unique(as.character(webtime$month))))
+                                        unique(as.character(visit$day))))
                    )
 
                    )
@@ -86,7 +104,7 @@ ui <- fluidPage(
                                              1 when the customer checked out. As the regression shows, there is a positive 
                                              correlation between the number of sessions per user, and whether or not they check out.'),
                    
-                   selectInput("Device", "Type of User Device", choices= c("Desktop","Mobile","Tablet")), plotOutput('interactive')
+                   selectInput("Device", "Type of User Device", choices= c("Desktop","Mobile","Tablet")), plotOutput('interactive'), p(),plotOutput('webmodel_duration'),p(),plotOutput('webmodel_duration_adjusted')
                   
                    
                   
@@ -94,8 +112,28 @@ ui <- fluidPage(
                    
                )
                
-               )
-               
+               ),
+
+# Attempted interactive upload
+    tabPanel("Upload", 
+        sidebarLayout(
+            sidebarPanel(
+                fileInput("infile", "Choose CSV File",
+                          accept = c(
+                              "text/csv",
+                              "text/comma-separated-values,text/plain",
+                              ".csv")
+                ),
+                tags$hr(),
+                checkboxInput("header", "Header", TRUE)
+            ),
+            mainPanel(
+                plotOutput("upload"),
+            )
+        )
+        
+    )
+ # end of attempted interactive upload              
                
                
                
@@ -106,6 +144,8 @@ ui <- fluidPage(
                
                )
     )
+
+
 
 
 # Define server logic
@@ -148,9 +188,9 @@ server <- function(input, output) {
     
     # Created an interactive data table. Filter data based on selections.
     output$table <- DT::renderDataTable(DT::datatable({
-        data <- webtime
-        if (input$month != "All") {
-            data <- data[data$month == input$month,]
+        data <- visit
+        if (input$day != "All") {
+            data <- data[data$day == input$day,]
         }
         data
     }))
@@ -188,7 +228,26 @@ server <- function(input, output) {
         vend_2
         
     })
-   
+    
+# Attempted server upload logic
+    plotdata <- reactive({
+        filestr <- input$infile
+        read.csv(filestr$name)
+    })
+    
+    output$upload <- renderPlot({
+        hist(plotdata())
+    })
+# End of attempted served upload logic
+    
+    output$webmodel_duration <- renderPlot({
+        readRDS(file='webmodel_duration')
+    })
+    
+    output$webmodel_duration_adjusted <- renderPlot({
+        readRDS(file='webmodel_duration_adjusted')
+    })
+
 }
 
 # Run the application 

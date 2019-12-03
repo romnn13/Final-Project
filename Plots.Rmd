@@ -75,8 +75,7 @@ plot<-ggplot(vend_1,aes(x=Product,y=revenue,group=Product,fill=Product))+geom_co
 
 # Saved the plot as an rds into the graphics folder. Copied the plot from the graphics folder into the shiny app directory.
 
-saveRDS(plot,file='graphics/plot.rds')
-file_copy('graphics/plot.rds','Milestone-6')
+saveRDS(plot,file='Milestone-6/plot.rds')
 
 # Explored a new dataframe, which examines revenue growth by product.
 
@@ -218,10 +217,45 @@ duration<- ggplot(purchase,(aes(x=avg_duration,y=total_pageviews))) + geom_jitte
 
 # Saved the plot as an RDS. Copied the file into the shiny app directory. 
 
-saveRDS(duration,file='graphics/duration')
-file_copy('graphics/duration', 'Milestone-6')
+saveRDS(duration,file='Milestone-6/duration')
+
+```
+
+```{r}
+visit
+library(stringr)
+library(moderndive)
+
+get_seconds <- function(x) {
+    res <- as.numeric(str_match(x, "(\\d+).(\\d{1,2}\\.?\\d{0,2}).")[2:3])
+    res[1]*60+res[2]
+}
+modifiedtime <- visit %>%
+  mutate(format_duration=map(avg_duration,get_seconds)) %>%
+  unnest(format_duration) %>%
+  mutate(checked_out=ifelse(total_checkouts>=1,1,0)) %>%
+  filter(format_duration>0) %>%
+  filter(format_duration<500)
+
+glm(formula=checked_out~format_duration,data=modifiedtime, family="binomial")
+webmodel_duration<-modifiedtime %>%
+  ggplot(aes(x=format_duration,y=checked_out))+geom_jitter(height=.1) + geom_smooth()
+
+saveRDS(webmodel_duration,file='Milestone-6/webmodel_duration')
 
 
+modifiedtime2 <- visit %>%
+  mutate(format_duration=map(avg_duration,get_seconds)) %>%
+  unnest(format_duration) %>%
+  mutate(checked_out=ifelse(total_checkouts>=1,1,0)) %>%
+  filter(format_duration>0) %>%
+  filter(format_duration<150) 
 
+glm(formula=checked_out~format_duration,data=modifiedtime2, family="binomial")
+webmodel_duration_adjusted<-modifiedtime2 %>%
+  ggplot(aes(x=format_duration,y=checked_out))+geom_jitter(height=.1) + geom_smooth()
+webmodel_duration_adjusted
+
+saveRDS(webmodel_duration_adjusted,file='Milestone-6/webmodel_duration_adjusted')
 ```
 
