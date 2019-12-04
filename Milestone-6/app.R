@@ -42,7 +42,8 @@ ui <- fluidPage(
                           data, and, therefore, included sales data from both in store sales and online sales. Next, a seasonal analysis
                           was conducted for web sales. The goal of this analysis was to gain a better understanding of the Harvard Shop's Sales Cycle. Next, a basic
                           exploration of the shopify data was done. Finally, modeling was conducted in order to examine the relationship between 
-                          several variables contained in Shopify's web data.")
+                          several variables contained in Shopify's web data."),h2('About Me'),p('My name is George Guarnieri. I am a sophomore
+                                                                                                studying Economics that works for HSA.')
                ),
 
 # Created the products page. Displayed both the product mix plot as well as the interactive plotly examining sales by product with points for each year. 
@@ -66,7 +67,7 @@ ui <- fluidPage(
                
  # Created the seasonality in web sales tab. Included 4 different animated graphs. Used split layout to display the same yeared plots on the same row. 
              
-               tabPanel("Seasonality in Web Sales", mainPanel(p('The charts below compare the seasonality in web
+               tabPanel("Seasonality in Web Sales", mainPanel(h2('Seasonal Patterns'),p('The charts below compare the seasonality in web
                                                                 sales between 2018 and 2019. As can be seen, the two years
                                                                 follow a fairly consistent pattern. The main difference comes in the fact that
                                                                 2018 seemed to have less seasonal variance when compared with 2019. The spikes in the graph in 2018
@@ -86,7 +87,7 @@ ui <- fluidPage(
                           selectInput("day",
                                       "Day:",
                                       c("All",
-                                        unique(as.character(visit$day))))
+                                        unique(as.character(visits$day))))
                    )
 
                    )
@@ -97,14 +98,24 @@ ui <- fluidPage(
  
 # Created the tab containing the model for web checkouts. Also created an interactive histogram, allowing user to select the type of device being used by the customer.
               
-               tabPanel("Web Checkouts", mainPanel(
-                   plotOutput("Sessions"),p('The model produced in this case examines the relatiobship between
+               tabPanel("Web Checkouts", mainPanel(h2('Modeling Deep Dive'),
+                   plotOutput("Sessions"),p('The model produced in this case examines the relationship between
                                              web checkouts and number of sessions. Sessions are displayed along the x-axis
                                              as a continuous variable. Checkouts was modified to be a binomial, returning
                                              1 when the customer checked out. As the regression shows, there is a positive 
                                              correlation between the number of sessions per user, and whether or not they check out.'),
                    
-                   selectInput("Device", "Type of User Device", choices= c("Desktop","Mobile","Tablet")), plotOutput('interactive'), p(),plotOutput('webmodel_duration'),p(),plotOutput('webmodel_duration_adjusted')
+                   selectInput("Device", "Type of User Device", choices= c("Desktop","Mobile","Tablet")), plotOutput('interactive'),p('In this plot, the relationship between device type and
+                                                                                                                                      pageviews was examined. Today,the importance of mobile usage
+                                                                                                                                      is becoming more and more important. While still slightly behind
+                                                                                                                                      Desktop pageviews, it is clear that mobile now comprises a significant portion
+                                                                                                                                      of all pageviews. '), 
+                   p(),h2('Impact of Duration on Checkouts'),plotOutput('webmodel_duration'),p('In this model, 
+                                                                                               the impact of duration--The amount of time that a user
+                                                                                               spent on the website--on whether or not the user checked out. A logistic model was utlized in this
+                                                                                               case. Based on this model, it appears that there seems to be a relationship that exists, however, only up to a certain
+                                                                                               point. This point prompted further analysis.
+                                                                                               '),p(),h2('Adjusted Web Model'),plotOutput('webmodel_duration_adjusted')
                   
                    
                   
@@ -112,28 +123,9 @@ ui <- fluidPage(
                    
                )
                
-               ),
+               )
 
-# Attempted interactive upload
-    tabPanel("Upload", 
-        sidebarLayout(
-            sidebarPanel(
-                fileInput("infile", "Choose CSV File",
-                          accept = c(
-                              "text/csv",
-                              "text/comma-separated-values,text/plain",
-                              ".csv")
-                ),
-                tags$hr(),
-                checkboxInput("header", "Header", TRUE)
-            ),
-            mainPanel(
-                plotOutput("upload"),
-            )
-        )
-        
-    )
- # end of attempted interactive upload              
+          
                
                
                
@@ -188,7 +180,7 @@ server <- function(input, output) {
     
     # Created an interactive data table. Filter data based on selections.
     output$table <- DT::renderDataTable(DT::datatable({
-        data <- visit
+        data <- visits
         if (input$day != "All") {
             data <- data[data$day == input$day,]
         }
@@ -207,7 +199,7 @@ server <- function(input, output) {
         visits %>%
           filter(ua_form_factor==input$Device) %>%
           filter(total_pageviews<50) %>%
-          ggplot(aes(x=total_pageviews))+geom_histogram() + ylim(0,40000)
+          ggplot(aes(x=total_pageviews))+geom_histogram() + ylim(0,40000) +labs(x="Total Pageviews",y="Count")
     })
     
  

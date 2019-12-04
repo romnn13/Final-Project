@@ -239,7 +239,7 @@ modifiedtime <- visit %>%
 
 glm(formula=checked_out~format_duration,data=modifiedtime, family="binomial")
 webmodel_duration<-modifiedtime %>%
-  ggplot(aes(x=format_duration,y=checked_out))+geom_jitter(height=.1) + geom_smooth()
+  ggplot(aes(x=format_duration,y=checked_out))+geom_jitter(height=.1) + geom_smooth() + labs(x="Duration", y="Checked out")
 
 saveRDS(webmodel_duration,file='Milestone-6/webmodel_duration')
 
@@ -253,7 +253,7 @@ modifiedtime2 <- visit %>%
 
 glm(formula=checked_out~format_duration,data=modifiedtime2, family="binomial")
 webmodel_duration_adjusted<-modifiedtime2 %>%
-  ggplot(aes(x=format_duration,y=checked_out))+geom_jitter(height=.1) + geom_smooth()
+  ggplot(aes(x=format_duration,y=checked_out))+geom_jitter(height=.1) + geom_smooth() + labs(x="Duration", y="Checked out")
 webmodel_duration_adjusted
 
 saveRDS(webmodel_duration_adjusted,file='Milestone-6/webmodel_duration_adjusted')
