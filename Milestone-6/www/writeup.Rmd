@@ -1,0 +1,22 @@
+---
+title: "Final Project Writeup"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Abstract
+
+Harvard Student Agencies is the largest student run business in the world. It employs over 650 undergraduate employees with the goal of helping such students defray the cost of their education, as well as providing them with hands on business experience. Harvard Student Agencies is comprised of 13 different agencies, with one such agency being The Harvard Shop. The Harvard Shop is a student-run retailer, employing over 100 students across 3 retail locations in Harvard Square, as well as operations involved in running the Harvard Shop's website. In this analysis, I honed my focus on the data collected from the Harvard Shop's web sales, and specifically focused on what insights can be discerned, as far as helping improve conversions on the sight. Through the construction of several logistic models, I discovered a specific timing threshold that significantly increases conversion rates. 
+
+# Background and significance of the data
+
+The Harvard Shop collects its data from two main sources. The first source is an in store point of sale system called Vend, which tracks inflows and outflows of inventory from each of the three brick and mortar locations. The second source is an e-commerce platform called shopify, which allows for the tracking of web sales data. Given my focus on the e-commerce side of the agency, I primarily utilized data sourced from shopify in my analysis. It should be noted that I did also perform some basic exploration on the Vend data as well, in order to demonstrate what the basic product mix of the Harvard Shop looks like over time. Outside of this basic exploration, the core of my project surrounded a single question: **What statistical relationships, if any, can be utilized to improve conversions on The Harvard Shop's Website?** The significance of this data is quite clear. Given the size of the set across multiple years, as well as the fact that it has such deep real world applicability and practical implications. 
+
+# Methodology
+
+I performed the bulk of my analysis in R-Studio, using the tidyverse library. I initiated my analysis by performing a basic cleaning and deep dive into the data. The cleaning process included filtering out potential outliers, reformatting the data in such a way that it was could be read and passed into a plot, and poking and prodding through the 300,000 plus rows to ensure that there were no errors in the transfer of data from the source onto my local device after it had been read in. 
+
+# Results
