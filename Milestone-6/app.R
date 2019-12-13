@@ -19,32 +19,7 @@ ui <- fluidPage(
     
     navbarPage("The Harvard Shop!",
                
-# Inserted the about page
 
-               tabPanel("About", h1('An Analysis of The Harvard Shop'),img(src='ThsDes.jpg',width=800, height=500),
-                        h2('About HSA'),
-                        p("Harvard Student Agencies is the largest student run business in the world. With over 650 undergraduate employees,
-                        this nonprofit is made up of 13 different agencies, each an entirely different business unit. One such agency, comprising 
-                        the largest segment of HSA's revenue, is called the Harvard Shop. Acquired by HSA in the early 2000s, The Harvard Shop
-                        is composed of three different brick and mortar locations, as well as an eccomerce platform. The 
-                        Harvard Shop utilizes two different platforms for inventory management and sales tracking. Each of the stores
-                        utilizes Vend, a point of sale system. Online, shopify is the ecommerce platform used. The use of these two platforms
-                        allows for a needed segmentation between physical and online sales. It is important to note that while there are two
-                        sales platforms utilized, only Vend is used in order to track inventory."),
-                        h2('Source of Data'),
-                        p("In recent years the retail world has begun to see a shift in terms of the approach taken to procurement, stock, and inventory
-                        management as a result of the data revolution. The Harvard Shop and HSA have only just initiated their shift into this new era
-                        of analytics. As they do, this project is meant to serve as a starting point. Identifying areas that have been overlooked and seeing
-                        if there are any operational conclusions that can be drawn from the data."),
-                        h2('Goal of the Project'),
-                        p("This project's analysis is split up into several different components. First, an alalysis
-                          of the Harvard shop's product mix over time was performed. This analysis was based off of Vend's
-                          data, and, therefore, included sales data from both in store sales and online sales. Next, a seasonal analysis
-                          was conducted for web sales. The goal of this analysis was to gain a better understanding of the Harvard Shop's Sales Cycle. Next, a basic
-                          exploration of the shopify data was done. Finally, modeling was conducted in order to examine the relationship between 
-                          several variables contained in Shopify's web data."),h2('About Me'),p('My name is George Guarnieri. I am a sophomore
-                                                                                                studying Economics that works for HSA.')
-               ),
 
 # Created the products page. Displayed both the product mix plot as well as the interactive plotly examining sales by product with points for each year. 
 
@@ -67,7 +42,7 @@ ui <- fluidPage(
                
  # Created the seasonality in web sales tab. Included 4 different animated graphs. Used split layout to display the same yeared plots on the same row. 
              
-               tabPanel("Seasonality in Web Sales", mainPanel(h2('Seasonal Patterns'),p('The charts below compare the seasonality in web
+               tabPanel("Seasonality in Web Sales", mainPanel(p('The charts below compare the seasonality in web
                                                                 sales between 2018 and 2019. As can be seen, the two years
                                                                 follow a fairly consistent pattern. The main difference comes in the fact that
                                                                 2018 seemed to have less seasonal variance when compared with 2019. The spikes in the graph in 2018
@@ -98,24 +73,15 @@ ui <- fluidPage(
  
 # Created the tab containing the model for web checkouts. Also created an interactive histogram, allowing user to select the type of device being used by the customer.
               
-               tabPanel("Web Checkouts", mainPanel(h2('Modeling Deep Dive'),
+               tabPanel("Web Checkouts", mainPanel(
                    plotOutput("Sessions"),p('The model produced in this case examines the relationship between
                                              web checkouts and number of sessions. Sessions are displayed along the x-axis
                                              as a continuous variable. Checkouts was modified to be a binomial, returning
                                              1 when the customer checked out. As the regression shows, there is a positive 
                                              correlation between the number of sessions per user, and whether or not they check out.'),
                    
-                   selectInput("Device", "Type of User Device", choices= c("Desktop","Mobile","Tablet")), plotOutput('interactive'),p('In this plot, the relationship between device type and
-                                                                                                                                      pageviews was examined. Today,the importance of mobile usage
-                                                                                                                                      is becoming more and more important. While still slightly behind
-                                                                                                                                      Desktop pageviews, it is clear that mobile now comprises a significant portion
-                                                                                                                                      of all pageviews. '), 
-                   p(),h2('Impact of Duration on Checkouts'),plotOutput('webmodel_duration'),p('In this model, 
-                                                                                               the impact of duration--The amount of time that a user
-                                                                                               spent on the website--on whether or not the user checked out. A logistic model was utlized in this
-                                                                                               case. Based on this model, it appears that there seems to be a relationship that exists, however, only up to a certain
-                                                                                               point. This point prompted further analysis.
-                                                                                               '),p(),h2('Adjusted Web Model'),plotOutput('webmodel_duration_adjusted')
+                   selectInput("Device", "Type of User Device", choices= c("Desktop","Mobile","Tablet")), plotOutput('interactive'),p("This model provides a look inside how users interact with the Harvard Shop's website, in terms of what device they access it on. Specifically, this 
+                                                                                                                        chart measures total pageviews by device. "),p(),plotOutput('webmodel_duration'),p(),p('In the initial model fit, the results proved to be relatively trivial. As can be seen, the graph demonstrates an insignificant relationship, when modeling checking out as a function of duration in the scope of the entire data set. Moving along the x-axis, there appears to be a very slight positive relationship, however, based on the returned p-value (which is visually confirmed by the flattness of the line), there is no statistical significance present. However, in the initial web model, there did seem to be some sort of positive relationship prior to the curve leveling out. In order to further investigate, an examination of the data, only including that "positive portion" of the curve was conducted. The analysis of the data when limiting the duration variable to only 150 seconds and below is shown in the adjusted checkout model below.'),p(),plotOutput('webmodel_duration_adjusted'),p(),p('Unlike the initial model that was fitted, the adjusted checkout model demonstrates a positive linear relationship, through the first 150 seconds of site duration. For the duration model slope coefficent, a p-value of 2e-16 was discerned, indicating statistical significance at the alpha level of 0.05.'), p(),h2('Potential Applications of Model'),p("It can be concluded that, through the first 150 seconds of a users visit to The Harvard Shop's website, increased duration increases the probability of the user checking out at a significant level. The application of this conclusion can be applied directly to the web strategy of the Harvard Shop's website, specifically with a focus of keeping users on the site for at least 150 seconds, which will significantly increase the chances of the user checking out.")
                   
                    
                   
@@ -123,10 +89,54 @@ ui <- fluidPage(
                    
                )
                
-               )
+               ),
 
-          
-               
+# Attempted interactive upload
+    tabPanel("Upload", 
+        sidebarLayout(
+            sidebarPanel(
+                fileInput("infile", "Choose CSV File",
+                          accept = c(
+                              "text/csv",
+                              "text/comma-separated-values,text/plain",
+                              ".csv")
+                ),
+                tags$hr(),
+                checkboxInput("header", "Header", TRUE)
+            ),
+            mainPanel(
+                plotOutput("upload"),
+            )
+        )
+        
+    ),
+ # end of attempted interactive upload              
+# Inserted the about page
+
+tabPanel("About", h1('An Analysis of The Harvard Shop'),img(src='ThsDes.jpg',width=800, height=500),
+         h2('About HSA'),
+         p("Harvard Student Agencies is the largest student run business in the world. With over 650 undergraduate employees,
+                        this nonprofit is made up of 13 different agencies, each an entirely different business unit. One such agency, comprising 
+                        the largest segment of HSA's revenue, is called the Harvard Shop. Acquired by HSA in the early 2000s, The Harvard Shop
+                        is composed of three different brick and mortar locations, as well as an eccomerce platform. The 
+                        Harvard Shop utilizes two different platforms for inventory management and sales tracking. Each of the stores
+                        utilizes Vend, a point of sale system. Online, shopify is the ecommerce platform used. The use of these two platforms
+                        allows for a needed segmentation between physical and online sales. It is important to note that while there are two
+                        sales platforms utilized, only Vend is used in order to track inventory."),
+         h2('Source of Data'),
+         p("In recent years the retail world has begun to see a shift in terms of the approach taken to procurement, stock, and inventory
+                        management as a result of the data revolution. The Harvard Shop and HSA have only just initiated their shift into this new era
+                        of analytics. As they do, this project is meant to serve as a starting point. Identifying areas that have been overlooked and seeing
+                        if there are any operational conclusions that can be drawn from the data."),
+         h2('Goal of the Project'),
+         p("This project's analysis is split up into several different components. First, an alalysis
+                          of the Harvard shop's product mix over time was performed. This analysis was based off of Vend's
+                          data, and, therefore, included sales data from both in store sales and online sales. Next, a seasonal analysis
+                          was conducted for web sales. The goal of this analysis was to gain a better understanding of the Harvard Shop's Sales Cycle. Next, a basic
+                          exploration of the shopify data was done. Finally, modeling was conducted in order to examine the relationship between 
+                          several variables contained in Shopify's web data."),h2("About Me"),
+         p("My name is George Guarnieri, and I am a sophomore working at The Harvard Shop, studying Economics."),p("My github can be accessed at: ")
+)         
                
                
                
@@ -147,7 +157,7 @@ server <- function(input, output) {
 # Rendered plot.rds as "image".
     
     output$image <- renderPlot({
-        readRDS(file='plot.rds')
+        readRDS(file = 'plot.rds')
         })
 
 # Rendered the gif 2019webtime as webtime2019.
@@ -199,7 +209,7 @@ server <- function(input, output) {
         visits %>%
           filter(ua_form_factor==input$Device) %>%
           filter(total_pageviews<50) %>%
-          ggplot(aes(x=total_pageviews))+geom_histogram() + ylim(0,40000) +labs(x="Total Pageviews",y="Count")
+          ggplot(aes(x=total_pageviews))+geom_histogram() + ylim(0,40000) +labs(x="Total Pageviews",y="Device Use")
     })
     
  
@@ -233,11 +243,11 @@ server <- function(input, output) {
 # End of attempted served upload logic
     
     output$webmodel_duration <- renderPlot({
-        readRDS(file='webmodel_duration')
+        readRDS(file = 'webmodel_duration')
     })
     
     output$webmodel_duration_adjusted <- renderPlot({
-        readRDS(file='webmodel_duration_adjusted')
+        readRDS(file = 'webmodel_duration_adjusted')
     })
 
 }
