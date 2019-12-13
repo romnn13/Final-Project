@@ -39,13 +39,13 @@ dir.create('graphics')
 
 # Read in the CSV file containing the data.
 
-vend_data_2_years<-read_csv("Milestone-6/vend-total_revenue-for-product-by-month (2).csv")
+vend_data_2_years <- read_csv("Milestone-6/vend-total_revenue-for-product-by-month (2).csv")
 
 vend_data_2_years
 
 # Created a plot of Web Revenue by year.
 
-vend_1<-vend_data_2_years%>%
+vend_1 <- vend_data_2_years%>%
 
 # Arranged the data by descending revenue value. Selected the top 10 products in terms of Revenue. 
   
@@ -54,7 +54,7 @@ vend_1<-vend_data_2_years%>%
   
 # Used the gather function to tame the data with key value pairs.
   
-  gather(key="Month/Year", value="Revenue", `Nov 2017`:`Oct 2019`)%>%
+  gather(key = "Month/Year", value="Revenue", `Nov 2017`:`Oct 2019`)%>%
   
 # Selected the relevant variables
   
@@ -67,11 +67,11 @@ vend_1<-vend_data_2_years%>%
   
 # Summarized the sum of the revenue by product and year
   
-  summarize(revenue=sum(Revenue))
+  summarize(revenue = sum(Revenue))
 
 # Created a plot showing revenue by product by year. Used a column chart and facet wrapped by year. Gave the chart a title, subtitle, and axis labels. Removed the tick labels from the x-axis since they were too crowded.
 
-plot<-ggplot(vend_1,aes(x=Product,y=revenue,group=Product,fill=Product))+geom_col()+facet_wrap(~Year)+labs(title="Web Revenue by Product 2017-2019",subtitle="Data Sourced From Vend",y="Revenue",x="Product")+theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())
+plot <- ggplot(vend_1,aes(x = Product,y = revenue,group = Product,fill = Product))+geom_col()+facet_wrap( ~ Year)+labs(title="Web Revenue by Product 2017-2019",subtitle = "Data Sourced From Vend",y = "Revenue",x = "Product")+theme(axis.text.x = element_blank(),axis.ticks.x = element_blank())
 
 # Saved the plot as an rds into the graphics folder. Copied the plot from the graphics folder into the shiny app directory.
 
@@ -81,8 +81,8 @@ saveRDS(plot,file='Milestone-6/plot.rds')
 
 growth <- vend_data_2_years %>%
   group_by(Product) %>%
-  mutate(oct2019='Oct 2019',oct2018='Oct 2018') %>%
-  mutate(oct2019=as.numeric(oct2019),oct2018=as.numeric(oct2018)) 
+  mutate(oct2019 = 'Oct 2019',oct2018 = 'Oct 2018') %>%
+  mutate(oct2019 = as.numeric(oct2019),oct2018 = as.numeric(oct2018)) 
 
 
 
@@ -90,15 +90,15 @@ growth <- vend_data_2_years %>%
 
 # Created an interactive scatter plot, which looks at revenue by product for each of the three years of data. 
 
-yearbyyear <- ggplot(vend_1,aes(x=Product, y=revenue, color=Year)) + geom_point() +  theme(axis.text.x = element_text(angle = 90, hjust = 1)) + labs(x="Product", y="Revenue")
+yearbyyear <- ggplot(vend_1,aes(x = Product, y = revenue, color = Year)) + geom_point() +  theme(axis.text.x = element_text(angle = 90, hjust = 1)) + labs(x = "Product", y = "Revenue")
 
 # Stored the interactive plotly.
 
-hover<-ggplotly(yearbyyear)
+hover <- ggplotly(yearbyyear)
 
 # Saved the plotly as an RDS file.
 
-saveRDS(hover,file='Milestone-6/hover.rds')
+saveRDS(hover,file = 'Milestone-6/hover.rds')
 
 
 ```
@@ -124,55 +124,55 @@ web_over_time_2019 <- read.csv('Other_Data/Web over time.csv')
 
 # Created a scatter plot examining net web sales by month. 
 
-ggplot(web_over_time_2019,aes(x=month, y=net_sales))+geom_point()
+ggplot(web_over_time_2019,aes(x = month, y = net_sales)) + geom_point()
 
 # Created a variable called period in order to make sure the points ended up grouped properly when using transition states.
 
-grouped_web_over_time_2019<- web_over_time_2019 %>%
-  mutate(period=1)
+grouped_web_over_time_2019 <- web_over_time_2019 %>%
+  mutate(period = 1)
 
 # Created a plot examining 2019 net web sales by month using gganimate and transition states. Mutated so that month was properly formatted as a date. Styled the plot as well. 
 
 time_2019_plot <- grouped_web_over_time_2019 %>%
-  mutate(month=as.Date(as.yearmon(month))) %>%
-  ggplot(aes(x=month, y=net_sales, color=month))+geom_point(size=3, aes(group=period))+transition_states(month) +     labs(title="2019 Web Sales by Month",x="Month", y="Net Sales") + shadow_mark()
+  mutate(month = as.Date(as.yearmon(month))) %>%
+  ggplot(aes(x = month, y = net_sales, color = month))+geom_point(size = 3, aes(group = period)) + transition_states(month) + labs(title="2019 Web Sales by Month",x = "Month", y = "Net Sales") + shadow_mark()
 
 # Saved the animation to the shiny app directory.
 
-anim_save(filename='2019webtime',animation=time_2019_plot, path='Milestone-6')
+anim_save(filename = '2019webtime',animation = time_2019_plot, path = 'Milestone-6')
 
 # Created a plot also examining 2019 net web sales by month. Also properly formatted the month as a date. In this case, used a different animation to do a reveal creating a line as opposed to appearance and dissapearance. 
 
 time_2019_plot_cooler<-grouped_web_over_time_2019 %>%
-  mutate(month=as.Date(as.yearmon(month))) %>%
-  ggplot(aes(x=month, y=net_sales, color=month))+geom_line()+geom_point(size=3, aes(group=period))+ coord_cartesian(clip = 'off') +transition_reveal(month) + labs(title='2019 Web Sales by Month',x="Month", y="Net Sales")
+  mutate(month = as.Date(as.yearmon(month))) %>%
+  ggplot(aes(x = month, y = net_sales, color=month)) + geom_line()+geom_point(size=3, aes(group = period))+ coord_cartesian(clip = 'off') + transition_reveal(month) + labs(title = '2019 Web Sales by Month',x = "Month", y = "Net Sales")
 
 # Saved the plot to the shiny app directory.
 
-anim_save(filename='2019webtimecool',time_2019_plot_cooler, path='Milestone-6')
+anim_save(filename = '2019webtimecool',time_2019_plot_cooler, path='Milestone-6')
 
 # Created a variable called period in order to make sure the points ended up grouped properly when using transition states.
 
 web_over_time_2018 <- read.csv('Other_Data/2018 web over time.csv') %>%
-  mutate(period=1,year=2018)
+  mutate(period = 1,year = 2018)
 
 # Created a plot examining 2018 net web sales by month using gganimate and transition states. Mutated so that month was properly formatted as a date. Styled the plot as well. 
 
 time_2018_plot <- web_over_time_2018 %>%
   mutate(month=as.Date(as.yearmon(month))) %>%
-  ggplot(aes(x=month, y=net_sales, color=month))+geom_point(size=3, aes(group=period))+transition_states(month) + labs(title="2018 Web Sales",x="Month", y="Net Sales")+shadow_trail()
+  ggplot(aes(x = month, y = net_sales, color = month)) + geom_point(size = 3, aes(group = period)) + transition_states(month) + labs(title = "2018 Web Sales",x = "Month", y = "Net Sales") + shadow_trail()
 
 # Saved the plot to the shiny app directory
 
-anim_save(filename='2018webtime',animation=time_2018_plot, path='Milestone-6')
+anim_save(filename = '2018webtime',animation = time_2018_plot, path = 'Milestone-6')
 
 # Created a plot also examining 2018 net web sales by month. Also properly formatted the month as a date. In this case, used a different animation to do a reveal creating a line as opposed to appearance and dissapearance. 
 
-time_2018_plot_cooler<-web_over_time_2018 %>%
-  mutate(month=as.Date(as.yearmon(month))) %>%
-  ggplot(aes(x=month, y=net_sales, color=month))+geom_line()+geom_point(size=3, aes(group=period))+ coord_cartesian(clip = 'off') +transition_reveal(month) + labs(title='2018 Web Sales by Month',x="Month", y="Net Sales")
+time_2018_plot_cooler< - web_over_time_2018 %>%
+  mutate(month = as.Date(as.yearmon(month))) %>%
+  ggplot(aes(x = month, y = net_sales, color = month)) + geom_line() + geom_point(size = 3, aes(group = period))+ coord_cartesian(clip = 'off') +transition_reveal(month) + labs(title = '2018 Web Sales by Month',x = "Month", y = "Net Sales")
 
-anim_save(filename='2018webtimecooler',time_2018_plot_cooler, path='Milestone-6')
+anim_save(filename = '2018webtimecooler',time_2018_plot_cooler, path = 'Milestone-6')
 
 
 
@@ -188,7 +188,7 @@ anim_save(filename='2018webtimecooler',time_2018_plot_cooler, path='Milestone-6'
 
 # Read in web visits data
 
-visit<-read.csv('Milestone-6/webvisits.csv')
+visit <- read.csv('Milestone-6/webvisits.csv')
 ```
 
 ```{r}
@@ -196,66 +196,76 @@ visit<-read.csv('Milestone-6/webvisits.csv')
 # Created a variable that indicates whether or not the user checked out. Made this "binomial." Filtered sessions to remove potential outliers.
 
 purchase<-visit %>%
-  mutate(total_checkouts=ifelse(total_checkouts>1,1,0)) %>%
-  filter(total_sessions<60)
+  mutate(total_checkouts=ifelse(total_checkouts > 1,1,0)) %>%
+  filter(total_sessions < 60)
 
 # Created a linear model examining the relationship between total sessions and checkouts. Made this model of family binomial.
 
-lm(formula=total_checkouts~total_sessions, data=purchase, family="binomial")
+lm(formula = total_checkouts ~ total_sessions, data = purchase, family = "binomial")
 
 # Created a scatter plot examining total sessions and whether a given customer checked out or not. Plotted a regression curve as well.
 
-purchasers<-ggplot(purchase, aes(x=total_sessions, y=total_checkouts)) + geom_jitter(height=.1) + geom_smooth() + labs(x='Total Sessions', y='Checked Out')
+purchasers<-ggplot(purchase, aes(x = total_sessions, y = total_checkouts)) + geom_jitter(height = .1) + geom_smooth() + labs(x = 'Total Sessions', y = 'Checked Out')
 
 # Saved the plot to the shiny app directory.
 
-saveRDS(purchasers,file='Milestone-6/sessions.rds')
+saveRDS(purchasers,file = 'Milestone-6/sessions.rds')
 
 # Created a scatter plot examining the relationship between average duration and total pageviews. Styled the plot as well.
 
-duration<- ggplot(purchase,(aes(x=avg_duration,y=total_pageviews))) + geom_jitter() + labs(title='Page Duration vs. Total Pageviews', x='Duration', y='Pageviews')
+duration<- ggplot(purchase,(aes(x = avg_duration,y = total_pageviews))) + geom_jitter() + labs(title = 'Page Duration vs. Total Pageviews', x ='Duration', y = 'Pageviews')
 
 # Saved the plot as an RDS. Copied the file into the shiny app directory. 
 
-saveRDS(duration,file='Milestone-6/duration')
+saveRDS(duration,file = 'Milestone-6/duration')
 
 ```
 
 ```{r}
-visit
+
+# Loaded all necessary libraries
+
 library(stringr)
 library(moderndive)
+
+# Created a function that reformatted the times in such a way that they can be passed into the function. Help courtesty of the R-Studio Community!
 
 get_seconds <- function(x) {
     res <- as.numeric(str_match(x, "(\\d+).(\\d{1,2}\\.?\\d{0,2}).")[2:3])
     res[1]*60+res[2]
 }
+
+# Cleaned the data. Mapped over each row, and unnested the format_duration. Used mutate to create a variable called checked_out. Used a logical operator to code checked out as a binomial based on the total checkouts variable. Initially filtered this data in such a way that it excluded very extreme observations or observatios that were large enough that they would have no potential practical application in terms of decisions that can be made by The Harvard Shop.
+
 modifiedtime <- visit %>%
-  mutate(format_duration=map(avg_duration,get_seconds)) %>%
+  mutate(format_duration = map(avg_duration,get_seconds)) %>%
   unnest(format_duration) %>%
-  mutate(checked_out=ifelse(total_checkouts>=1,1,0)) %>%
-  filter(format_duration>0) %>%
-  filter(format_duration<500)
+  mutate(checked_out = ifelse(total_checkouts>=1,1,0)) %>%
+  filter(format_duration > 0) %>%
+  filter(format_duration < 500)
 
-glm(formula=checked_out~format_duration,data=modifiedtime, family="binomial")
-webmodel_duration<-modifiedtime %>%
-  ggplot(aes(x=format_duration,y=checked_out))+geom_jitter(height=.1) + geom_smooth() + labs(x="Duration", y="Checked out")
+glm(formula=checked_out~format_duration,data=modifiedtime, family = "binomial")
+webmodel_duration <- modifiedtime %>%
+  ggplot(aes(x = format_duration,y = checked_out)) + geom_jitter(height = .1) + geom_smooth() + labs(x = "Duration",y = "Checked Out",title = "Checkout Model")
 
-saveRDS(webmodel_duration,file='Milestone-6/webmodel_duration')
+saveRDS(webmodel_duration,file = 'Milestone-6/webmodel_duration')
 
 
 modifiedtime2 <- visit %>%
-  mutate(format_duration=map(avg_duration,get_seconds)) %>%
+  mutate(format_duration = map(avg_duration,get_seconds)) %>%
   unnest(format_duration) %>%
-  mutate(checked_out=ifelse(total_checkouts>=1,1,0)) %>%
-  filter(format_duration>0) %>%
-  filter(format_duration<150) 
+  mutate(checked_out = ifelse(total_checkouts >= 1,1,0)) %>%
+  filter(format_duration > 0) %>%
+  filter(format_duration < 150) 
 
-glm(formula=checked_out~format_duration,data=modifiedtime2, family="binomial")
-webmodel_duration_adjusted<-modifiedtime2 %>%
-  ggplot(aes(x=format_duration,y=checked_out))+geom_jitter(height=.1) + geom_smooth() + labs(x="Duration", y="Checked out")
+# Constructed an adjusted model, using the modifietime2 data set. This data set limited the duration times to less than 150 seconds, which had been identified as the cutoff point in the initial model.
+
+glm(formula = checked_out ~ format_duration,data = modifiedtime2, family = "binomial")
+summary(glm(formula = checked_out ~ format_duration,data = modifiedtime2, family = "binomial"))
+webmodel_duration_adjusted <- modifiedtime2 %>%
+  ggplot(aes(x = format_duration,y = checked_out)) + geom_jitter(height = .1) + geom_smooth() +labs(x = "Duration",y = "Checked Out", title = "Adjusted Checkout Model")
 webmodel_duration_adjusted
 
-saveRDS(webmodel_duration_adjusted,file='Milestone-6/webmodel_duration_adjusted')
+saveRDS(webmodel_duration_adjusted,file = 'Milestone-6/webmodel_duration_adjusted')
 ```
 
