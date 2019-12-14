@@ -5,12 +5,16 @@ library(shiny)
 library(tidyverse)
 library(ggplot2)
 library(plotly)
+library(leaflet)
+library(htmltools)
+library(vembedr)
 
 # Read in all relevant data utilized in the shiny app.
 
 webtime<- read.csv('Web over time copy.csv')
 visits <- read.csv('webvisits.csv')
 vend_data_2_years<-read_csv("vend-total_revenue-for-product-by-month (2).csv")
+points<-data.frame(latitude=c(63,56,51,21,55,46,-25,46,42,24,52),longitude=c(23,-106,10,79,-3,2,134,2,13,-103,5))
 
 # Define UI for application
 ui <- fluidPage(
@@ -42,7 +46,7 @@ ui <- fluidPage(
                
  # Created the seasonality in web sales tab. Included 4 different animated graphs. Used split layout to display the same yeared plots on the same row. 
              
-               tabPanel("Seasonality in Web Sales", mainPanel(p('The charts below compare the seasonality in web
+               tabPanel("Seasonality in Web Sales", mainPanel(h2('Seasonal Patterns'),p('The charts below compare the seasonality in web
                                                                 sales between 2018 and 2019. As can be seen, the two years
                                                                 follow a fairly consistent pattern. The main difference comes in the fact that
                                                                 2018 seemed to have less seasonal variance when compared with 2019. The spikes in the graph in 2018
@@ -73,7 +77,7 @@ ui <- fluidPage(
  
 # Created the tab containing the model for web checkouts. Also created an interactive histogram, allowing user to select the type of device being used by the customer.
               
-               tabPanel("Web Checkouts", mainPanel(
+               tabPanel("Web Checkouts", mainPanel(h2('Does Duration Impact Customer Checkouts?'),
                    plotOutput("Sessions"),p('The model produced in this case examines the relationship between
                                              web checkouts and number of sessions. Sessions are displayed along the x-axis
                                              as a continuous variable. Checkouts was modified to be a binomial, returning
@@ -91,27 +95,16 @@ ui <- fluidPage(
                
                ),
 
-# Attempted interactive upload
-    tabPanel("Upload", 
-        sidebarLayout(
-            sidebarPanel(
-                fileInput("infile", "Choose CSV File",
-                          accept = c(
-                              "text/csv",
-                              "text/comma-separated-values,text/plain",
-                              ".csv")
-                ),
-                tags$hr(),
-                checkboxInput("header", "Header", TRUE)
-            ),
-            mainPanel(
-                plotOutput("upload"),
-            )
-        )
-        
-    ),
- # end of attempted interactive upload              
-# Inserted the about page
+tabPanel("Sessions Map", h2('Sessions by Country'),leafletOutput('map'),p("This map shows sessions for the countries with the most sessions at theharvardshop.com.The map is limited to the top ten countries by session. It should be noted that the points on the 
+                                                                          map are only meant to indicate a given country, not a given city. For sake of appearance, exact longitudinal and latituginal coordinates were assigned to each 
+                                                                          country.As can be seen in the map, the Harvard Shop's customer base stretches
+                                                                          across the entirety of the world, touching many different parts of the globe. Interestingly enough, Canada
+                                                                          was a very close second to the United States in terms of overall visitors to the website, as well as total
+                                                                          overall sessions. Following Canada, however, there is a fairly significant dropoff in terms
+                                                                          of traffic from other countries in comparison to the US.")),
+
+           
+# Inserted the about pages
 
 tabPanel("About", h1('An Analysis of The Harvard Shop'),img(src='ThsDes.jpg',width=800, height=500),
          h2('About HSA'),
@@ -134,8 +127,9 @@ tabPanel("About", h1('An Analysis of The Harvard Shop'),img(src='ThsDes.jpg',wid
                           data, and, therefore, included sales data from both in store sales and online sales. Next, a seasonal analysis
                           was conducted for web sales. The goal of this analysis was to gain a better understanding of the Harvard Shop's Sales Cycle. Next, a basic
                           exploration of the shopify data was done. Finally, modeling was conducted in order to examine the relationship between 
-                          several variables contained in Shopify's web data."),h2("About Me"),
-         p("My name is George Guarnieri, and I am a sophomore working at The Harvard Shop, studying Economics."),p("My github can be accessed at: ")
+                          several variables contained in Shopify's web data."),h2("About Me"),embed_url("https://youtu.be/RiwmW5hEZqo"),
+
+         p("My name is George Guarnieri, and I am a sophomore working at The Harvard Shop, studying Economics."),p(a(href="https://github.com/romnn13", "Link to Github"))
 )         
                
                
@@ -232,13 +226,11 @@ server <- function(input, output) {
     })
     
 # Attempted server upload logic
-    plotdata <- reactive({
-        filestr <- input$infile
-        read.csv(filestr$name)
-    })
-    
-    output$upload <- renderPlot({
-        hist(plotdata())
+    output$map <- renderLeaflet({
+      points %>%
+        leaflet() %>%
+        addTiles() %>%
+        addCircleMarkers(lat = ~latitude,lng = ~longitude) 
     })
 # End of attempted served upload logic
     
